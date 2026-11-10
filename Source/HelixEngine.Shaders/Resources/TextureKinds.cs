@@ -34,6 +34,16 @@ public struct Texture2DArray<T> where T : unmanaged
         int layer = System.Math.Clamp((int)System.MathF.Floor(uvLayer.z + 0.5f), 0, layers - 1);
         return TexelMath.Sample2D(texels, layer * width * height, width, height, sampler, uvLayer.xy);
     }
+
+    [Intrinsic("texture.samplecmp")]
+    public readonly float SampleCmp(SamplerComparisonState sampler, float3 uvLayer, float reference) => SampleCmpLevelZero(sampler, uvLayer, reference);
+
+    [Intrinsic("texture.samplecmplevelzero")]
+    public readonly float SampleCmpLevelZero(SamplerComparisonState sampler, float3 uvLayer, float reference)
+    {
+        int layer = System.Math.Clamp((int)System.MathF.Floor(uvLayer.z + 0.5f), 0, layers - 1);
+        return TexelMath.Compare2D(texels, layer * width * height, width, height, sampler, uvLayer.xy, reference);
+    }
 }
 
 /// <summary>A volume of texels, filtered in three dimensions.</summary>
@@ -109,6 +119,27 @@ public struct TextureCube<T> where T : unmanaged
     [Intrinsic("texture.sampleLevel")]
     public readonly T SampleLevel(SamplerState sampler, float3 direction, float level)
     {
+        (int face, float2 uv) = Face(direction);
+        SamplerState clamped = sampler;
+        clamped.Address = SamplerAddress.Clamp;
+        return TexelMath.Sample2D(texels, face * size * size, size, size, clamped, uv);
+    }
+
+    [Intrinsic("texture.samplecmp")]
+    public readonly float SampleCmp(SamplerComparisonState sampler, float3 direction, float reference) => SampleCmpLevelZero(sampler, direction, reference);
+
+    [Intrinsic("texture.samplecmplevelzero")]
+    public readonly float SampleCmpLevelZero(SamplerComparisonState sampler, float3 direction, float reference)
+    {
+        (int face, float2 uv) = Face(direction);
+        SamplerComparisonState clamped = sampler;
+        clamped.Address = SamplerAddress.Clamp;
+        return TexelMath.Compare2D(texels, face * size * size, size, size, clamped, uv, reference);
+    }
+
+    // The face the direction points at and the coordinates inside it.
+    private static (int face, float2 uv) Face(float3 direction)
+    {
         float ax = System.MathF.Abs(direction.x), ay = System.MathF.Abs(direction.y), az = System.MathF.Abs(direction.z);
         int face;
         float sc, tc, ma;
@@ -133,9 +164,6 @@ public struct TextureCube<T> where T : unmanaged
             tc = -direction.y;
             ma = az;
         }
-        float2 uv = new((sc / ma + 1.0f) * 0.5f, (tc / ma + 1.0f) * 0.5f);
-        SamplerState clamped = sampler;
-        clamped.Address = SamplerAddress.Clamp;
-        return TexelMath.Sample2D(texels, face * size * size, size, size, clamped, uv);
+        return (face, new float2((sc / ma + 1.0f) * 0.5f, (tc / ma + 1.0f) * 0.5f));
     }
 }

@@ -154,6 +154,12 @@ internal static class Program
         var cube = TextureCube<float>.FromTexels(faces, 1);
         Check(cube.Sample(default, new float3(-2, 0.5f, 1)) == 1.0f && cube.Sample(default, new float3(0.1f, 3, -1)) == 2.0f &&
               cube.Sample(default, new float3(0.2f, -0.1f, -5)) == 5.0f, "cube faces by the largest component");
+        var depths = Texture2D<float>.FromTexels(new[] { 0.2f, 0.6f, 0.4f, 0.8f }, 2, 2);
+        var cmp = new SamplerComparisonState { Filter = SamplerFilter.Linear, Address = SamplerAddress.Clamp, Compare = CompareFunction.LessEqual };
+        Check(depths.SampleCmpLevelZero(cmp, new float2(0.5f, 0.5f), 0.5f) == 0.5f, "comparison sampling averages the passed texels");
+        cmp.Filter = SamplerFilter.Nearest;
+        Check(depths.SampleCmp(cmp, new float2(0.25f, 0.25f), 0.1f) == 1.0f && depths.SampleCmp(cmp, new float2(0.25f, 0.25f), 0.3f) == 0.0f,
+              "comparison against one texel");
         bool refused = false;
         try { ids.Sample(default, new float2(0.5f, 0.5f)); }
         catch (InvalidOperationException) { refused = true; }

@@ -53,6 +53,8 @@ public static class Unlit
   `Load`. `Texture2D<float4>.FromTexels` gives a texture to run shaders on the CPU.
   `Texture2DArray<T>` (layer in the third coordinate), `Texture3D<T>` and `TextureCube<T>` (sampled by a direction) work the
   same way; cubes have no `Load`.
+- Shadow maps: `SampleCmp` and `SampleCmpLevelZero` of 2D, array and cube textures of float texels with a
+  `SamplerComparisonState` give the share of filtered texels for which reference OP texel holds.
 - Storage resources: `StructuredBuffer<T>` and `RWStructuredBuffer<T>` (indexer, `Length`), `RWTexture2D` (write a texel
   with `image[texel] = color`; its format is `[Storage(slot, Format = ...)]`), and `InterlockedAdd(buffer, index, value)`
   for counters shared by the threads of a compute shader.

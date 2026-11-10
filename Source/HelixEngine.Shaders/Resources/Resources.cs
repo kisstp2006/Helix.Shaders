@@ -21,6 +21,19 @@ public struct SamplerState
 }
 
 /// <summary>
+/// Sampler state of a comparison sampler (shadow maps): every texel is compared with a reference value and filtering
+/// averages the results. On the GPU it is the sampler bound at the slot; the fields drive CPU sampling only.
+/// </summary>
+[IntrinsicType("SamplerComparisonState")]
+public struct SamplerComparisonState
+{
+    public SamplerFilter Filter;
+    public SamplerAddress Address;
+    /// <summary>Passes where reference OP texel holds.</summary>
+    public CompareFunction Compare;
+}
+
+/// <summary>
 /// A 2D texture whose texels have the type T: float, int or uint, a scalar or a vector of 2 to 4 components. On the GPU it is
 /// the texture bound at the slot; on the CPU it reads the texels given to <see cref="FromTexels"/>, rows top first, so
 /// shaders can run in tests and under a debugger. Only textures of float texels can be sampled; integer textures are read
@@ -54,6 +67,15 @@ public struct Texture2D<T> where T : unmanaged
 
     [Intrinsic("texture.sampleLevel")]
     public readonly T SampleLevel(SamplerState sampler, float2 uv, float level) => TexelMath.Sample2D(texels, 0, width, height, sampler, uv);
+
+    /// <summary>The share of the filtered texels for which reference OP texel holds; float texels only.</summary>
+    [Intrinsic("texture.samplecmp")]
+    public readonly float SampleCmp(SamplerComparisonState sampler, float2 uv, float reference) =>
+        TexelMath.Compare2D(texels, 0, width, height, sampler, uv, reference);
+
+    [Intrinsic("texture.samplecmplevelzero")]
+    public readonly float SampleCmpLevelZero(SamplerComparisonState sampler, float2 uv, float reference) =>
+        TexelMath.Compare2D(texels, 0, width, height, sampler, uv, reference);
 }
 
 /// <summary>Conversions between the float texel types and float4, for filtering on the CPU.</summary>
@@ -61,6 +83,34 @@ internal static class TexelMath
 {
     public static int Wrap(SamplerState sampler, int i, int n) =>
         sampler.Address == SamplerAddress.Repeat ? ((i % n) + n) % n : System.Math.Clamp(i, 0, n - 1);
+
+    public static bool Passes(CompareFunction f, float reference, float texel) => f switch
+    {
+        CompareFunction.Never => false,
+        CompareFunction.Less => reference < texel,
+        CompareFunction.Equal => reference == texel,
+        CompareFunction.LessEqual => reference <= texel,
+        CompareFunction.Greater => reference > texel,
+        CompareFunction.NotEqual => reference != texel,
+        CompareFunction.GreaterEqual => reference >= texel,
+        _ => true,
+    };
+
+    // Comparison sampling of one 2D image: the texels are compared first, then filtered like colors.
+    public static float Compare2D<T>(T[]? texels, int offset, int width, int height, SamplerComparisonState sampler, float2 uv, float reference)
+        where T : unmanaged
+    {
+        if (typeof(T) != typeof(float))
+            throw new System.InvalidOperationException("comparison sampling needs a texture of float texels");
+        if (texels == null)
+            return 0.0f;
+        float[] values = (float[])(object)texels;
+        float[] results = new float[width * height];
+        for (int i = 0; i < results.Length; i++)
+            results[i] = Passes(sampler.Compare, reference, values[offset + i]) ? 1.0f : 0.0f;
+        SamplerState plain = new() { Filter = sampler.Filter, Address = sampler.Address };
+        return Sample2D(results, 0, width, height, plain, uv);
+    }
 
     // One 2D image starting at `offset` in the texels: nearest or bilinear, as the GPU filters a single mip level.
     public static T Sample2D<T>(T[]? texels, int offset, int width, int height, SamplerState sampler, float2 uv) where T : unmanaged
