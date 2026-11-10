@@ -20,7 +20,7 @@ public static class CheckerShader
     }
 
     [Uniform(0)] public static Draw draw;
-    [Texture(0)] public static Texture2D albedo;
+    [Texture(0)] public static Texture2D<float4> albedo;
     [Sampler(0)] public static SamplerState albedoSampler;
 
     [VertexShader]
@@ -120,7 +120,7 @@ internal static class Program
     private static void ShaderOnCpu()
     {
         float4[] pixels = { new(1, 0, 0, 1), new(0, 1, 0, 1), new(0, 0, 1, 1), new(1, 1, 1, 0) };
-        CheckerShader.albedo = Texture2D.FromPixels(pixels, 2, 2);
+        CheckerShader.albedo = Texture2D<float4>.FromTexels(pixels, 2, 2);
         CheckerShader.albedoSampler = new SamplerState { Filter = SamplerFilter.Nearest, Address = SamplerAddress.Repeat };
         CheckerShader.draw = new CheckerShader.Draw { tint = new float4(0.5f, 1, 1, 1), scale = new float2(2, 1) };
 
@@ -138,6 +138,15 @@ internal static class Program
         float4 bilinear = CheckerShader.albedo.Sample(new SamplerState { Filter = SamplerFilter.Linear, Address = SamplerAddress.Clamp }, new float2(0.5f, 0.25f));
         Near(bilinear, new float4(0.5f, 0.5f, 0, 1), "bilinear sample between two texels");
         Check(CheckerShader.albedo.Size.Equals(new int2(2, 2)), "texture size");
+        var heights = Texture2D<float>.FromTexels(new[] { 0.0f, 1.0f, 2.0f, 3.0f }, 2, 2);
+        Check(heights.Sample(new SamplerState { Filter = SamplerFilter.Linear, Address = SamplerAddress.Clamp }, new float2(0.5f, 0.5f)) == 1.5f,
+              "scalar float texture filters");
+        var ids = Texture2D<uint2>.FromTexels(new[] { new uint2(1, 2), new uint2(3, 4) }, 2, 1);
+        Check(ids.Load(new int2(1, 0)).Equals(new uint2(3, 4)), "integer texture loads");
+        bool refused = false;
+        try { ids.Sample(default, new float2(0.5f, 0.5f)); }
+        catch (InvalidOperationException) { refused = true; }
+        Check(refused, "integer textures are not sampled");
 
         var buffer = RWStructuredBuffer<uint>.FromArray(new uint[4]);
         for (int i = 0; i < buffer.Length; i++)
@@ -149,7 +158,7 @@ internal static class Program
         Check(columns[2].Equals(new float3(4, 5, 6)) && columns[0].Equals(new float3(1, 0, 0)), "matrix columns by index");
 
         Bindless.Clear();
-        BindlessTexture red = Bindless.Register(Texture2D.FromPixels(new float4[] { new(1, 0, 0, 1) }, 1, 1), default);
+        BindlessTexture red = Bindless.Register(Texture2D<float4>.FromTexels(new float4[] { new(1, 0, 0, 1) }, 1, 1), default);
         BindlessTexture checker = Bindless.Register(CheckerShader.albedo, CheckerShader.albedoSampler);
         Check(red.Index == 0u && checker.Index == 1u, "bindless texture indices follow registration");
         Near(checker.Sample(new float2(0.75f, 0.25f)), new float4(0, 1, 0, 1), "bindless texture samples with its sampler");

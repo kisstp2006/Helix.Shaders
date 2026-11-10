@@ -85,9 +85,9 @@ public struct BindlessBuffer
 /// </summary>
 public static class Bindless
 {
-    public readonly struct Entry(Texture2D texture, SamplerState sampler)
+    public readonly struct Entry(Texture2D<float4> texture, SamplerState sampler)
     {
-        public Texture2D Texture { get; } = texture;
+        public Texture2D<float4> Texture { get; } = texture;
         public SamplerState Sampler { get; } = sampler;
 
         public float4 Sample(float2 uv) => Texture.Sample(Sampler, uv);
@@ -97,7 +97,7 @@ public static class Bindless
     private static readonly List<uint[]> buffers = new();
 
     /// <summary>Indices start at zero and follow the order of the calls.</summary>
-    public static BindlessTexture Register(Texture2D texture, SamplerState sampler)
+    public static BindlessTexture Register(Texture2D<float4> texture, SamplerState sampler)
     {
         textures.Add(new Entry(texture, sampler));
         return new BindlessTexture((uint)(textures.Count - 1));
