@@ -134,3 +134,16 @@ public sealed class KeywordAttribute(KeywordScope scope = KeywordScope.Local) : 
 
 /// <summary>Base class of shader definitions; properties, keywords and pass classes live in the derived class.</summary>
 public abstract class ShaderDefinition;
+
+/// <summary>
+/// A compute shader: the [ComputeShader] methods of a class derived from ComputeDefinition are its kernels, found by their
+/// names, in the order they are written; its [Keyword] fields select variants as in shader definitions.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class ComputeDefinitionAttribute(string name) : Attribute
+{
+    public string Name { get; } = name;
+}
+
+/// <summary>Base class of compute definitions.</summary>
+public abstract class ComputeDefinition;

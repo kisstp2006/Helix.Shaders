@@ -110,6 +110,9 @@ public sealed class Glass : ShaderDefinition
   definition form one SubShader.
 - `[UsePass("Shader/PASS")]` on an empty nested static class takes a pass of another shader in its place.
 
+A class derived from `ComputeDefinition` with `[ComputeDefinition(name)]` is a compute shader: its `[ComputeShader(x, y, z)]`
+methods are the kernels, found by name, and its `[Keyword]` fields select variants.
+
 ## Build and test
 
 ```
