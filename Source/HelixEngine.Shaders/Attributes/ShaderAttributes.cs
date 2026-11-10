@@ -100,55 +100,6 @@ public sealed class StorageAttribute(int slot) : Attribute
     public int Slot { get; } = slot;
 }
 
-// Shader definition, the declarative part around the code.
-[AttributeUsage(AttributeTargets.Class)]
-public sealed class ShaderAttribute(string name) : Attribute
-{
-    public string Name { get; } = name;
-}
-
-public enum CullMode
-{
-    Off,
-    Front,
-    Back,
-}
-
-public enum CompareFunction
-{
-    Never,
-    Less,
-    Equal,
-    LessEqual,
-    Greater,
-    NotEqual,
-    GreaterEqual,
-    Always,
-}
-
-[AttributeUsage(AttributeTargets.Class)]
-public sealed class PassAttribute(string name) : Attribute
-{
-    public string Name { get; } = name;
-    public string LightMode { get; set; } = "";
-    public CullMode Cull { get; set; } = CullMode.Back;
-    public bool ZWrite { get; set; } = true;
-    public CompareFunction ZTest { get; set; } = CompareFunction.LessEqual;
-}
-
-[AttributeUsage(AttributeTargets.Field)]
-public sealed class PropertyAttribute(string displayName) : Attribute
-{
-    public string DisplayName { get; } = displayName;
-}
-
-[AttributeUsage(AttributeTargets.Field)]
-public sealed class RangeAttribute(float min, float max) : Attribute
-{
-    public float Min { get; } = min;
-    public float Max { get; } = max;
-}
-
 public enum KeywordScope
 {
     Global,

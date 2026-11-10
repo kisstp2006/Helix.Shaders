@@ -56,6 +56,41 @@ public static class Unlit
 Shader code may use structs, static methods, generics, loops, `switch`, `ref`/`out`/`in` and local functions. Classes, heap
 allocation, virtual calls, recursion, strings and exceptions are not available in code that is compiled for the GPU.
 
+## Shader definitions
+
+A class derived from `ShaderDefinition` describes one shader with everything around the code:
+
+```csharp
+[Shader("Game/Glass", Fallback = "Game/Unlit")]
+[Tag("Queue", "Transparent")]
+public sealed class Glass : ShaderDefinition
+{
+    [Property("Tint"), MainColor, Default(1.0f, 1.0f, 1.0f, 0.5f)] public float4 tint;
+    [Property("Base Map"), MainTexture, DefaultTexture("white")] public Texture2D baseMap;
+    [Property("Smoothness"), Range(0.0f, 1.0f), Default(0.5f)] public float smoothness;
+
+    [Keyword(KeywordScope.Global)] public static readonly bool Fog;
+    [Keyword(ShaderFeature = true)] public static readonly Quality Detail;
+
+    [Pass("Forward", LightMode = "ForwardBase", ZWrite = false)]
+    [Blend(BlendFactor.SrcAlpha, BlendFactor.OneMinusSrcAlpha)]
+    public static class Forward
+    {
+        [VertexShader] public static Varyings Vertex(...) { ... }
+        [FragmentShader] public static float4 Fragment(...) { ... }
+    }
+}
+```
+
+- Shader: `[Shader(name)]` with `Fallback`, `CustomEditor`, `LOD`; `[Tag(name, value)]` on the shader or on a pass.
+- Properties are the instance fields: `[Property(display name)]` with `[Range]`, `[Default]`, `[DefaultTexture]`, `[HDR]`,
+  `[NoScaleOffset]`, `[MainTexture]`, `[MainColor]`, `[PerRendererData]`, `[HideInInspector]`, `[Toggle(keyword)]`,
+  `[KeywordEnum(keyword)]`.
+- Keywords are static `bool` or enum fields with `[Keyword]`; the compiler builds one variant per combination in use.
+- Passes are nested static classes with `[Pass(name)]` in the order written: `LightMode`, `Cull`, `ZWrite`, `ZTest`,
+  `ZClip`, `OffsetFactor`, `OffsetUnits`, `ColorMask`, `AlphaToMask`, `Conservative`, plus `[Blend(...)]` (per target with
+  `Target`) and `[Stencil(...)]` (per face with `Face`).
+
 ## Build and test
 
 ```
