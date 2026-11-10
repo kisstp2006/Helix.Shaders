@@ -144,6 +144,10 @@ internal static class Program
             buffer[i] = (uint)(i * i);
         Check(buffer[3] == 9u, "storage buffer write and read");
 
+        float3x3 columns = float3x3.Identity;
+        columns[2] = new float3(4, 5, 6);
+        Check(columns[2].Equals(new float3(4, 5, 6)) && columns[0].Equals(new float3(1, 0, 0)), "matrix columns by index");
+
         Bindless.Clear();
         BindlessTexture red = Bindless.Register(Texture2D.FromPixels(new float4[] { new(1, 0, 0, 1) }, 1, 1), default);
         BindlessTexture checker = Bindless.Register(CheckerShader.albedo, CheckerShader.albedoSampler);
