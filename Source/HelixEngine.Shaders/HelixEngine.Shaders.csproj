@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>HelixEngine.Shaders</RootNamespace>
+    <AssemblyName>HelixEngine.Shaders</AssemblyName>
+  </PropertyGroup>
+</Project>
