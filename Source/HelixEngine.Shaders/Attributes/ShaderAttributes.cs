@@ -98,6 +98,16 @@ public sealed class SamplerAttribute(int slot) : Attribute
 public sealed class StorageAttribute(int slot) : Attribute
 {
     public int Slot { get; } = slot;
+    /// <summary>Texel format of a storage texture; buffers ignore it.</summary>
+    public StorageFormat Format { get; set; } = StorageFormat.RGBA8;
+}
+
+public enum StorageFormat
+{
+    RGBA8,
+    RGBA16F,
+    RGBA32F,
+    R32F,
 }
 
 public enum KeywordScope

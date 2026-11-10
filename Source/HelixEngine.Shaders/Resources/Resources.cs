@@ -109,4 +109,41 @@ public struct RWStructuredBuffer<T> where T : unmanaged
         [Intrinsic("buffer.load")] get => items![index];
         [Intrinsic("buffer.store")] set => items![index] = value;
     }
+
+    internal readonly T[] Items => items!;
+}
+
+/// <summary>
+/// A 2D texture a compute shader writes, bound as a storage texture. On the CPU it keeps the texels written,
+/// rows top first.
+/// </summary>
+[IntrinsicType("RWTexture2D")]
+public struct RWTexture2D
+{
+    private float4[]? pixels;
+    private int width, height;
+
+    public static RWTexture2D Create(int width, int height) => new() { pixels = new float4[width * height], width = width, height = height };
+
+    public readonly float4[]? Pixels => pixels;
+
+    [Intrinsic("image.size")]
+    public readonly int2 Size => new(width, height);
+
+    public readonly float4 this[int2 texel]
+    {
+        [Intrinsic("image.store")] set => pixels![texel.y * width + texel.x] = value;
+    }
+}
+
+public static partial class ShaderMath
+{
+    /// <summary>Adds to one element of a buffer as a single step even when many threads do it; returns the value before.</summary>
+    [Intrinsic("interlockedadd")]
+    public static uint InterlockedAdd(RWStructuredBuffer<uint> buffer, int index, uint value) =>
+        System.Threading.Interlocked.Add(ref buffer.Items[index], value) - value;
+
+    [Intrinsic("interlockedadd")]
+    public static int InterlockedAdd(RWStructuredBuffer<int> buffer, int index, int value) =>
+        System.Threading.Interlocked.Add(ref buffer.Items[index], value) - value;
 }

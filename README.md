@@ -49,6 +49,9 @@ public static class Unlit
 - Stage inputs and outputs are parameters, return values or struct fields with `[Position]`, `[Location(n)]`, `[Target(n)]`,
   `[Depth]`, `[VertexId]`, `[InstanceId]`, `[FrontFacing]`, `[DispatchThreadId]`.
 - Resources are static fields with `[Uniform(slot)]`, `[Texture(slot)]`, `[Sampler(slot)]`, `[Storage(slot)]`.
+- Storage resources: `StructuredBuffer<T>` and `RWStructuredBuffer<T>` (indexer, `Length`), `RWTexture2D` (write a texel
+  with `image[texel] = color`; its format is `[Storage(slot, Format = ...)]`), and `InterlockedAdd(buffer, index, value)`
+  for counters shared by the threads of a compute shader.
 - Matrices are column major: `Mul(m, v)` multiplies the column vector `v`, `Mul(a, b)` applies `b` first.
 - Comparisons of vectors give bool vectors; combine them with `Any`, `All` and `Select`.
 - `Ddx`, `Ddy` and `Fwidth` are zero on the CPU; `Discard()` sets `ShaderMath.Discarded` there.
