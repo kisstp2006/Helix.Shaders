@@ -143,6 +143,17 @@ internal static class Program
               "scalar float texture filters");
         var ids = Texture2D<uint2>.FromTexels(new[] { new uint2(1, 2), new uint2(3, 4) }, 2, 1);
         Check(ids.Load(new int2(1, 0)).Equals(new uint2(3, 4)), "integer texture loads");
+        var layered = Texture2DArray<float>.FromTexels(new[] { 1.0f, 1.0f, 1.0f, 1.0f, 5.0f, 5.0f, 5.0f, 5.0f }, 2, 2, 2);
+        Check(layered.Sample(default, new float3(0.3f, 0.6f, 0.9f)) == 5.0f && layered.Load(new int3(0, 1, 0)) == 1.0f, "texture array layers");
+        var volume = Texture3D<float>.FromTexels(new[] { 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 2.0f, 2.0f, 2.0f }, 2, 2, 2);
+        Check(volume.Sample(new SamplerState { Filter = SamplerFilter.Linear, Address = SamplerAddress.Clamp }, new float3(0.5f, 0.5f, 0.5f)) == 1.0f,
+              "volume filters between slices");
+        float[] faces = new float[6];
+        for (int f = 0; f < 6; f++)
+            faces[f] = f;
+        var cube = TextureCube<float>.FromTexels(faces, 1);
+        Check(cube.Sample(default, new float3(-2, 0.5f, 1)) == 1.0f && cube.Sample(default, new float3(0.1f, 3, -1)) == 2.0f &&
+              cube.Sample(default, new float3(0.2f, -0.1f, -5)) == 5.0f, "cube faces by the largest component");
         bool refused = false;
         try { ids.Sample(default, new float2(0.5f, 0.5f)); }
         catch (InvalidOperationException) { refused = true; }

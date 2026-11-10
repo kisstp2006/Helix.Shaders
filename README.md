@@ -10,7 +10,7 @@ testable and debuggable, and is compiled for the GPU from its IL by Helix.Shader
 |---|---|
 | `Source/HelixEngine.Shaders/Types/` | Vectors `float2..4`, `int2..4`, `uint2..4`, `bool2..4` with swizzles (generated), matrices `float2x2`, `float3x3`, `float4x4` |
 | `Source/HelixEngine.Shaders/Math/` | `ShaderMath`: component wise functions (generated) and geometric, matrix and derivative functions |
-| `Source/HelixEngine.Shaders/Resources/` | `Texture2D<T>`, `SamplerState`, `StructuredBuffer<T>`, `RWStructuredBuffer<T>` with CPU implementations |
+| `Source/HelixEngine.Shaders/Resources/` | `Texture2D<T>`, `Texture2DArray<T>`, `Texture3D<T>`, `TextureCube<T>`, `SamplerState`, `StructuredBuffer<T>`, `RWStructuredBuffer<T>` with CPU implementations |
 | `Source/HelixEngine.Shaders/Attributes/` | Entry point, stage input and output, resource binding and shader definition attributes |
 | `Tests/HelixEngine.Shaders.Tests/` | Console test program, including a sample shader run on the CPU |
 | `Tools/GenerateTypes.py` | Generates the vector types and the component wise functions |
@@ -51,6 +51,8 @@ public static class Unlit
 - Resources are static fields with `[Uniform(slot)]`, `[Texture(slot)]`, `[Sampler(slot)]`, `[Storage(slot)]`.
 - Textures: `Texture2D<T>` with T a float, int or uint scalar or vector; float textures are sampled, all are read with
   `Load`. `Texture2D<float4>.FromTexels` gives a texture to run shaders on the CPU.
+  `Texture2DArray<T>` (layer in the third coordinate), `Texture3D<T>` and `TextureCube<T>` (sampled by a direction) work the
+  same way; cubes have no `Load`.
 - Storage resources: `StructuredBuffer<T>` and `RWStructuredBuffer<T>` (indexer, `Length`), `RWTexture2D` (write a texel
   with `image[texel] = color`; its format is `[Storage(slot, Format = ...)]`), and `InterlockedAdd(buffer, index, value)`
   for counters shared by the threads of a compute shader.

@@ -53,36 +53,33 @@ public struct Texture2D<T> where T : unmanaged
     public readonly T Sample(SamplerState sampler, float2 uv) => SampleLevel(sampler, uv, 0.0f);
 
     [Intrinsic("texture.sampleLevel")]
-    public readonly T SampleLevel(SamplerState sampler, float2 uv, float level)
-    {
-        if (!TexelMath.IsFloat<T>())
-            throw new System.InvalidOperationException("only textures of float texels can be sampled; use Load");
-        if (texels == null)
-            return default;
-        float fx = uv.x * width - 0.5f, fy = uv.y * height - 0.5f;
-        if (sampler.Filter == SamplerFilter.Nearest)
-            return Texel(sampler, (int)System.MathF.Floor(fx + 0.5f), (int)System.MathF.Floor(fy + 0.5f));
-        int x0 = (int)System.MathF.Floor(fx), y0 = (int)System.MathF.Floor(fy);
-        float tx = fx - x0, ty = fy - y0;
-        float4 top = ShaderMath.Lerp(TexelMath.ToFloat4(Texel(sampler, x0, y0)), TexelMath.ToFloat4(Texel(sampler, x0 + 1, y0)), tx);
-        float4 bottom = ShaderMath.Lerp(TexelMath.ToFloat4(Texel(sampler, x0, y0 + 1)), TexelMath.ToFloat4(Texel(sampler, x0 + 1, y0 + 1)), tx);
-        return TexelMath.FromFloat4<T>(ShaderMath.Lerp(top, bottom, ty));
-    }
-
-    private readonly T Texel(SamplerState sampler, int x, int y)
-    {
-        if (sampler.Address == SamplerAddress.Repeat)
-        {
-            x = ((x % width) + width) % width;
-            y = ((y % height) + height) % height;
-        }
-        return Load(new int2(x, y));
-    }
+    public readonly T SampleLevel(SamplerState sampler, float2 uv, float level) => TexelMath.Sample2D(texels, 0, width, height, sampler, uv);
 }
 
 /// <summary>Conversions between the float texel types and float4, for filtering on the CPU.</summary>
 internal static class TexelMath
 {
+    public static int Wrap(SamplerState sampler, int i, int n) =>
+        sampler.Address == SamplerAddress.Repeat ? ((i % n) + n) % n : System.Math.Clamp(i, 0, n - 1);
+
+    // One 2D image starting at `offset` in the texels: nearest or bilinear, as the GPU filters a single mip level.
+    public static T Sample2D<T>(T[]? texels, int offset, int width, int height, SamplerState sampler, float2 uv) where T : unmanaged
+    {
+        if (!IsFloat<T>())
+            throw new System.InvalidOperationException("only textures of float texels can be sampled; use Load");
+        if (texels == null)
+            return default;
+        T Texel(int x, int y) => texels[offset + Wrap(sampler, y, height) * width + Wrap(sampler, x, width)];
+        float fx = uv.x * width - 0.5f, fy = uv.y * height - 0.5f;
+        if (sampler.Filter == SamplerFilter.Nearest)
+            return Texel((int)System.MathF.Floor(fx + 0.5f), (int)System.MathF.Floor(fy + 0.5f));
+        int x0 = (int)System.MathF.Floor(fx), y0 = (int)System.MathF.Floor(fy);
+        float tx = fx - x0, ty = fy - y0;
+        float4 top = ShaderMath.Lerp(ToFloat4(Texel(x0, y0)), ToFloat4(Texel(x0 + 1, y0)), tx);
+        float4 bottom = ShaderMath.Lerp(ToFloat4(Texel(x0, y0 + 1)), ToFloat4(Texel(x0 + 1, y0 + 1)), tx);
+        return FromFloat4<T>(ShaderMath.Lerp(top, bottom, ty));
+    }
+
     public static bool IsFloat<T>() => typeof(T) == typeof(float) || typeof(T) == typeof(float2) || typeof(T) == typeof(float3) || typeof(T) == typeof(float4);
 
     public static float4 ToFloat4<T>(T v) where T : unmanaged => v switch
