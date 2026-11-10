@@ -143,6 +143,18 @@ internal static class Program
         for (int i = 0; i < buffer.Length; i++)
             buffer[i] = (uint)(i * i);
         Check(buffer[3] == 9u, "storage buffer write and read");
+
+        Bindless.Clear();
+        BindlessTexture red = Bindless.Register(Texture2D.FromPixels(new float4[] { new(1, 0, 0, 1) }, 1, 1), default);
+        BindlessTexture checker = Bindless.Register(CheckerShader.albedo, CheckerShader.albedoSampler);
+        Check(red.Index == 0u && checker.Index == 1u, "bindless texture indices follow registration");
+        Near(checker.Sample(new float2(0.75f, 0.25f)), new float4(0, 1, 0, 1), "bindless texture samples with its sampler");
+        BindlessBuffer words = Bindless.Register(new uint[] { 1, AsUInt(2.5f), 3, 4 });
+        Check(words.Size == 16u && words.Load(4) == AsUInt(2.5f) && AsFloat(words.Load2(4)).x == 2.5f, "bindless buffer loads at byte offsets");
+        words.Store2(8, new uint2(7, 8));
+        Check(words.Load4(0).Equals(new uint4(1, AsUInt(2.5f), 7, 8)), "bindless buffer stores");
+        Check(AsInt(AsFloat(-3)) == -3 && AsUInt(-1) == 0xFFFFFFFFu, "bit casts keep the bits");
+        Bindless.Clear();
     }
 
     private static int Main()

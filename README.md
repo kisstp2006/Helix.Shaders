@@ -52,6 +52,10 @@ public static class Unlit
 - Storage resources: `StructuredBuffer<T>` and `RWStructuredBuffer<T>` (indexer, `Length`), `RWTexture2D` (write a texel
   with `image[texel] = color`; its format is `[Storage(slot, Format = ...)]`), and `InterlockedAdd(buffer, index, value)`
   for counters shared by the threads of a compute shader.
+- Bindless resources: `BindlessTexture` (`Sample`, `SampleLevel`) and `BindlessBuffer` (`Load` to `Load4`, `Store` to `Store4`
+  at byte offsets, `Size`; writes in compute shaders only) hold the index the renderer registered the resource under,
+  so they can sit in uniform blocks, buffers and vertex data. On the CPU the indices point into `Bindless`, filled with
+  `Bindless.Register`. `AsFloat`, `AsUInt` and `AsInt` reinterpret the bits of a value.
 - Matrices are column major: `Mul(m, v)` multiplies the column vector `v`, `Mul(a, b)` applies `b` first.
 - Comparisons of vectors give bool vectors; combine them with `Any`, `All` and `Select`.
 - `Ddx`, `Ddy` and `Fwidth` are zero on the CPU; `Discard()` sets `ShaderMath.Discarded` there.
