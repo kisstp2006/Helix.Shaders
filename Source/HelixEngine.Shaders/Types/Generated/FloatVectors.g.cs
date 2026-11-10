@@ -36,6 +36,7 @@ public struct float2
     public static bool2 operator >(float2 a, float2 b) => new(a.x > b.x, a.y > b.y);
     public static bool2 operator <=(float2 a, float2 b) => new(a.x <= b.x, a.y <= b.y);
     public static bool2 operator >=(float2 a, float2 b) => new(a.x >= b.x, a.y >= b.y);
+    public static explicit operator float2(half2 v) => new((float)v.x, (float)v.y);
     public static explicit operator float2(int2 v) => new((float)v.x, (float)v.y);
     public static explicit operator float2(uint2 v) => new((float)v.x, (float)v.y);
     public static bool2 operator ==(float2 a, float2 b) => new(a.x == b.x, a.y == b.y);
@@ -108,6 +109,7 @@ public struct float3
     public static bool3 operator >(float3 a, float3 b) => new(a.x > b.x, a.y > b.y, a.z > b.z);
     public static bool3 operator <=(float3 a, float3 b) => new(a.x <= b.x, a.y <= b.y, a.z <= b.z);
     public static bool3 operator >=(float3 a, float3 b) => new(a.x >= b.x, a.y >= b.y, a.z >= b.z);
+    public static explicit operator float3(half3 v) => new((float)v.x, (float)v.y, (float)v.z);
     public static explicit operator float3(int3 v) => new((float)v.x, (float)v.y, (float)v.z);
     public static explicit operator float3(uint3 v) => new((float)v.x, (float)v.y, (float)v.z);
     public static bool3 operator ==(float3 a, float3 b) => new(a.x == b.x, a.y == b.y, a.z == b.z);
@@ -271,6 +273,7 @@ public struct float4
     public static bool4 operator >(float4 a, float4 b) => new(a.x > b.x, a.y > b.y, a.z > b.z, a.w > b.w);
     public static bool4 operator <=(float4 a, float4 b) => new(a.x <= b.x, a.y <= b.y, a.z <= b.z, a.w <= b.w);
     public static bool4 operator >=(float4 a, float4 b) => new(a.x >= b.x, a.y >= b.y, a.z >= b.z, a.w >= b.w);
+    public static explicit operator float4(half4 v) => new((float)v.x, (float)v.y, (float)v.z, (float)v.w);
     public static explicit operator float4(int4 v) => new((float)v.x, (float)v.y, (float)v.z, (float)v.w);
     public static explicit operator float4(uint4 v) => new((float)v.x, (float)v.y, (float)v.z, (float)v.w);
     public static bool4 operator ==(float4 a, float4 b) => new(a.x == b.x, a.y == b.y, a.z == b.z, a.w == b.w);

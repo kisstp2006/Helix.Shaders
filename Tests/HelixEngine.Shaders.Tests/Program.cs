@@ -160,6 +160,12 @@ internal static class Program
         cmp.Filter = SamplerFilter.Nearest;
         Check(depths.SampleCmp(cmp, new float2(0.25f, 0.25f), 0.1f) == 1.0f && depths.SampleCmp(cmp, new float2(0.25f, 0.25f), 0.3f) == 0.0f,
               "comparison against one texel");
+        half third = (half)(1.0f / 3.0f);
+        Check(System.MathF.Abs(third - 1.0f / 3.0f) < 0.001f && (float)third != 1.0f / 3.0f, "half keeps 16 bits");
+        half2 pair = new half2((half)1.5f, (half)2.0f) * (half)2.0f;
+        Check((float)pair.x == 3.0f && (float)pair.y == 4.0f && ((float2)pair).Equals(new float2(3, 4)), "half vectors and conversions");
+        half3 hx = (half3)new float3(0.25f, 0.5f, 0.75f);
+        Check((float)hx.zyx.x == 0.75f, "half swizzles");
         bool refused = false;
         try { ids.Sample(default, new float2(0.5f, 0.5f)); }
         catch (InvalidOperationException) { refused = true; }

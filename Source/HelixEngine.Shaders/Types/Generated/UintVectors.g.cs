@@ -41,6 +41,7 @@ public struct uint2
     public static uint2 operator <<(uint2 a, int b) => new(a.x << b, a.y << b);
     public static uint2 operator >>(uint2 a, int b) => new(a.x >> b, a.y >> b);
     public static explicit operator uint2(float2 v) => new((uint)v.x, (uint)v.y);
+    public static explicit operator uint2(half2 v) => new((uint)v.x, (uint)v.y);
     public static explicit operator uint2(int2 v) => new((uint)v.x, (uint)v.y);
     public static bool2 operator ==(uint2 a, uint2 b) => new(a.x == b.x, a.y == b.y);
     public static bool2 operator !=(uint2 a, uint2 b) => new(a.x != b.x, a.y != b.y);
@@ -117,6 +118,7 @@ public struct uint3
     public static uint3 operator <<(uint3 a, int b) => new(a.x << b, a.y << b, a.z << b);
     public static uint3 operator >>(uint3 a, int b) => new(a.x >> b, a.y >> b, a.z >> b);
     public static explicit operator uint3(float3 v) => new((uint)v.x, (uint)v.y, (uint)v.z);
+    public static explicit operator uint3(half3 v) => new((uint)v.x, (uint)v.y, (uint)v.z);
     public static explicit operator uint3(int3 v) => new((uint)v.x, (uint)v.y, (uint)v.z);
     public static bool3 operator ==(uint3 a, uint3 b) => new(a.x == b.x, a.y == b.y, a.z == b.z);
     public static bool3 operator !=(uint3 a, uint3 b) => new(a.x != b.x, a.y != b.y, a.z != b.z);
@@ -284,6 +286,7 @@ public struct uint4
     public static uint4 operator <<(uint4 a, int b) => new(a.x << b, a.y << b, a.z << b, a.w << b);
     public static uint4 operator >>(uint4 a, int b) => new(a.x >> b, a.y >> b, a.z >> b, a.w >> b);
     public static explicit operator uint4(float4 v) => new((uint)v.x, (uint)v.y, (uint)v.z, (uint)v.w);
+    public static explicit operator uint4(half4 v) => new((uint)v.x, (uint)v.y, (uint)v.z, (uint)v.w);
     public static explicit operator uint4(int4 v) => new((uint)v.x, (uint)v.y, (uint)v.z, (uint)v.w);
     public static bool4 operator ==(uint4 a, uint4 b) => new(a.x == b.x, a.y == b.y, a.z == b.z, a.w == b.w);
     public static bool4 operator !=(uint4 a, uint4 b) => new(a.x != b.x, a.y != b.y, a.z != b.z, a.w != b.w);

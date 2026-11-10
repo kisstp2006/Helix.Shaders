@@ -49,6 +49,8 @@ public static class Unlit
 - Stage inputs and outputs are parameters, return values or struct fields with `[Position]`, `[Location(n)]`, `[Target(n)]`,
   `[Depth]`, `[VertexId]`, `[InstanceId]`, `[FrontFacing]`, `[DispatchThreadId]`.
 - Resources are static fields with `[Uniform(slot)]`, `[Texture(slot)]`, `[Sampler(slot)]`, `[Storage(slot)]`.
+- `half` and `half2` to `half4`: 16 bits in C# memory, computed as float on the GPU (`mediump` on GLSL ES); for locals,
+  parameters and values between stages. Uniform blocks, buffers and vertex inputs take `float`.
 - Textures: `Texture2D<T>` with T a float, int or uint scalar or vector; float textures are sampled, all are read with
   `Load`. `Texture2D<float4>.FromTexels` gives a texture to run shaders on the CPU.
   `Texture2DArray<T>` (layer in the third coordinate), `Texture3D<T>` and `TextureCube<T>` (sampled by a direction) work the

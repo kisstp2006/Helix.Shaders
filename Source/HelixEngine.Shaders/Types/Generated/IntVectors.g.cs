@@ -42,6 +42,7 @@ public struct int2
     public static int2 operator <<(int2 a, int b) => new(a.x << b, a.y << b);
     public static int2 operator >>(int2 a, int b) => new(a.x >> b, a.y >> b);
     public static explicit operator int2(float2 v) => new((int)v.x, (int)v.y);
+    public static explicit operator int2(half2 v) => new((int)v.x, (int)v.y);
     public static explicit operator int2(uint2 v) => new((int)v.x, (int)v.y);
     public static bool2 operator ==(int2 a, int2 b) => new(a.x == b.x, a.y == b.y);
     public static bool2 operator !=(int2 a, int2 b) => new(a.x != b.x, a.y != b.y);
@@ -119,6 +120,7 @@ public struct int3
     public static int3 operator <<(int3 a, int b) => new(a.x << b, a.y << b, a.z << b);
     public static int3 operator >>(int3 a, int b) => new(a.x >> b, a.y >> b, a.z >> b);
     public static explicit operator int3(float3 v) => new((int)v.x, (int)v.y, (int)v.z);
+    public static explicit operator int3(half3 v) => new((int)v.x, (int)v.y, (int)v.z);
     public static explicit operator int3(uint3 v) => new((int)v.x, (int)v.y, (int)v.z);
     public static bool3 operator ==(int3 a, int3 b) => new(a.x == b.x, a.y == b.y, a.z == b.z);
     public static bool3 operator !=(int3 a, int3 b) => new(a.x != b.x, a.y != b.y, a.z != b.z);
@@ -287,6 +289,7 @@ public struct int4
     public static int4 operator <<(int4 a, int b) => new(a.x << b, a.y << b, a.z << b, a.w << b);
     public static int4 operator >>(int4 a, int b) => new(a.x >> b, a.y >> b, a.z >> b, a.w >> b);
     public static explicit operator int4(float4 v) => new((int)v.x, (int)v.y, (int)v.z, (int)v.w);
+    public static explicit operator int4(half4 v) => new((int)v.x, (int)v.y, (int)v.z, (int)v.w);
     public static explicit operator int4(uint4 v) => new((int)v.x, (int)v.y, (int)v.z, (int)v.w);
     public static bool4 operator ==(int4 a, int4 b) => new(a.x == b.x, a.y == b.y, a.z == b.z, a.w == b.w);
     public static bool4 operator !=(int4 a, int4 b) => new(a.x != b.x, a.y != b.y, a.z != b.z, a.w != b.w);
