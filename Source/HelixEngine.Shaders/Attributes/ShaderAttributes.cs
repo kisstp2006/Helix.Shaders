@@ -23,6 +23,17 @@ public sealed class VertexShaderAttribute : Attribute;
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class FragmentShaderAttribute : Attribute;
 
+/// <summary>
+/// The loops of this method are unrolled when their trip count is known when the shader compiles (like [unroll] on a loop
+/// in other shading languages; C# has no attributes on statements). Without it the compiler decides by size.
+/// </summary>
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UnrollAttribute : Attribute;
+
+/// <summary>The loops of this method stay loops (like [loop] on a loop in other shading languages).</summary>
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class LoopAttribute : Attribute;
+
 [AttributeUsage(AttributeTargets.Method)]
 public sealed class ComputeShaderAttribute(int x, int y = 1, int z = 1) : Attribute
 {

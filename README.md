@@ -67,6 +67,7 @@ public static class Unlit
 - Matrices are column major: `Mul(m, v)` multiplies the column vector `v`, `Mul(a, b)` applies `b` first.
 - Comparisons of vectors give bool vectors; combine them with `Any`, `All` and `Select`.
 - `Ddx`, `Ddy` and `Fwidth` are zero on the CPU; `Discard()` sets `ShaderMath.Discarded` there.
+- `[Unroll]` and `[Loop]` on a method ask the compiler to unroll its loops or to keep them as loops.
 
 Shader code may use structs, static methods, generics, loops, `switch`, `ref`/`out`/`in` and local functions. Classes, heap
 allocation, virtual calls, recursion, strings and exceptions are not available in code that is compiled for the GPU.
