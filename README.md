@@ -108,6 +108,7 @@ public sealed class Glass : ShaderDefinition
 - SubShaders are nested static classes with `[SubShader]` (`LOD` and the render state of a pass) holding pass classes; their
   tags, blending, stencil and render state apply to their passes unless a pass sets its own. Without them the passes of the
   definition form one SubShader.
+- `[UsePass("Shader/PASS")]` on an empty nested static class takes a pass of another shader in its place.
 
 ## Build and test
 

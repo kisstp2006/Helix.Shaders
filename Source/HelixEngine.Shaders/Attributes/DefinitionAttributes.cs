@@ -133,6 +133,16 @@ public sealed class SubShaderAttribute : Attribute
     public bool Conservative { get; set; }
 }
 
+/// <summary>
+/// An empty nested static class that stands for a pass of another shader, "Shader/PASS": its code, render state and tags.
+/// The pass name is matched without case; the first SubShader of that shader with such a pass gives it.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class UsePassAttribute(string path) : Attribute
+{
+    public string Path { get; } = path;
+}
+
 /// <summary>Blending of a pass; without it the pass overwrites the target. Target -1 applies to every target.</summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public sealed class BlendAttribute(BlendFactor source, BlendFactor destination, BlendFactor sourceAlpha, BlendFactor destinationAlpha) : Attribute
