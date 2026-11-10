@@ -113,6 +113,26 @@ public sealed class PassAttribute(string name) : Attribute
     public bool Conservative { get; set; }
 }
 
+/// <summary>
+/// A group of passes in a nested static class: the renderer uses the first SubShader whose LOD is within its limit. Its
+/// render state, [Tag], [Blend] and [Stencil] apply to its passes unless a pass sets its own. Without SubShader classes the
+/// passes of a definition form one SubShader with the LOD and tags of the [Shader].
+/// </summary>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class SubShaderAttribute : Attribute
+{
+    public int LOD { get; set; }
+    public CullMode Cull { get; set; } = CullMode.Back;
+    public bool ZWrite { get; set; } = true;
+    public CompareFunction ZTest { get; set; } = CompareFunction.LessEqual;
+    public bool ZClip { get; set; } = true;
+    public float OffsetFactor { get; set; }
+    public float OffsetUnits { get; set; }
+    public ColorWriteMask ColorMask { get; set; } = ColorWriteMask.All;
+    public bool AlphaToMask { get; set; }
+    public bool Conservative { get; set; }
+}
+
 /// <summary>Blending of a pass; without it the pass overwrites the target. Target -1 applies to every target.</summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public sealed class BlendAttribute(BlendFactor source, BlendFactor destination, BlendFactor sourceAlpha, BlendFactor destinationAlpha) : Attribute
