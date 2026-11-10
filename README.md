@@ -55,8 +55,8 @@ public static class Unlit
   same way; cubes have no `Load`.
 - Shadow maps: `SampleCmp` and `SampleCmpLevelZero` of 2D, array and cube textures of float texels with a
   `SamplerComparisonState` give the share of filtered texels for which reference OP texel holds.
-- Storage resources: `StructuredBuffer<T>` and `RWStructuredBuffer<T>` (indexer, `Length`), `RWTexture2D` (write a texel
-  with `image[texel] = color`; its format is `[Storage(slot, Format = ...)]`), and `InterlockedAdd(buffer, index, value)`
+- Storage resources: `StructuredBuffer<T>` and `RWStructuredBuffer<T>` (indexer, `Length`), `RWTexture2D<T>` (`image[texel]`
+  reads and writes; the format follows T or `[Storage(slot, Format = ...)]`, and only R32F, R32UI and R32I can be read), and `InterlockedAdd(buffer, index, value)`
   for counters shared by the threads of a compute shader.
 - Bindless resources: `BindlessTexture` (`Sample`, `SampleLevel`) and `BindlessBuffer` (`Load` to `Load4`, `Store` to `Store4`
   at byte offsets, `Size`; writes in compute shaders only) hold the index the renderer registered the resource under,

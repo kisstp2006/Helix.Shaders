@@ -186,25 +186,29 @@ public struct RWStructuredBuffer<T> where T : unmanaged
 }
 
 /// <summary>
-/// A 2D texture a compute shader writes, bound as a storage texture. On the CPU it keeps the texels written,
+/// A 2D texture a compute shader reads and writes, bound as a storage texture. T is float4 for the four component formats,
+/// float, uint or int for R32F, R32UI and R32I; only the single value formats can be read. On the CPU it keeps the texels,
 /// rows top first.
 /// </summary>
 [IntrinsicType("RWTexture2D")]
-public struct RWTexture2D
+public struct RWTexture2D<T> where T : unmanaged
 {
-    private float4[]? pixels;
+    private T[]? texels;
     private int width, height;
 
-    public static RWTexture2D Create(int width, int height) => new() { pixels = new float4[width * height], width = width, height = height };
+    public static RWTexture2D<T> Create(int width, int height) => FromTexels(new T[width * height], width, height);
 
-    public readonly float4[]? Pixels => pixels;
+    public static RWTexture2D<T> FromTexels(T[] texels, int width, int height) => new() { texels = texels, width = width, height = height };
+
+    public readonly T[]? Texels => texels;
 
     [Intrinsic("image.size")]
     public readonly int2 Size => new(width, height);
 
-    public readonly float4 this[int2 texel]
+    public readonly T this[int2 texel]
     {
-        [Intrinsic("image.store")] set => pixels![texel.y * width + texel.x] = value;
+        [Intrinsic("image.load")] get => texels![texel.y * width + texel.x];
+        [Intrinsic("image.store")] set => texels![texel.y * width + texel.x] = value;
     }
 }
 

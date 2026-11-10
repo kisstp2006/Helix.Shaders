@@ -98,16 +98,23 @@ public sealed class SamplerAttribute(int slot) : Attribute
 public sealed class StorageAttribute(int slot) : Attribute
 {
     public int Slot { get; } = slot;
-    /// <summary>Texel format of a storage texture; buffers ignore it.</summary>
-    public StorageFormat Format { get; set; } = StorageFormat.RGBA8;
+    /// <summary>Texel format of a storage texture; buffers ignore it. Auto: R32F, R32UI or R32I for single values, RGBA8 for float4.</summary>
+    public StorageFormat Format { get; set; } = StorageFormat.Auto;
 }
 
+/// <summary>
+/// Texel formats of storage textures. Shaders can read only the single 32 bit ones (R32F, R32UI, R32I); every format can be
+/// written.
+/// </summary>
 public enum StorageFormat
 {
+    Auto,
     RGBA8,
     RGBA16F,
     RGBA32F,
     R32F,
+    R32UI,
+    R32I,
 }
 
 public enum KeywordScope
