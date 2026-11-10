@@ -32,6 +32,9 @@ public struct Texture2D
 
     public static Texture2D FromPixels(float4[] pixels, int width, int height) => new() { pixels = pixels, width = width, height = height };
 
+    /// <summary>The CPU side pixels, null for a texture that only exists on the GPU.</summary>
+    public readonly float4[]? Pixels => pixels;
+
     [Intrinsic("texture.size")]
     public readonly int2 Size => new(width, height);
 
