@@ -67,6 +67,7 @@ public static class Unlit
 - Matrices are column major: `Mul(m, v)` multiplies the column vector `v`, `Mul(a, b)` applies `b` first.
 - Comparisons of vectors give bool vectors; combine them with `Any`, `All` and `Select`.
 - `Ddx`, `Ddy` and `Fwidth` are zero on the CPU; `Discard()` sets `ShaderMath.Discarded` there.
+- `ShaderMath.InstanceId()` is the instance being drawn in vertex shaders (0 on the CPU), readable in any function they call.
 - `[Unroll]` and `[Loop]` on a method ask the compiler to unroll its loops or to keep them as loops.
 
 Shader code may use structs, static methods, generics, loops, `switch`, `ref`/`out`/`in` and local functions. Classes, heap

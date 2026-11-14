@@ -6,6 +6,9 @@ namespace HelixEngine.Shaders;
 /// </summary>
 public static partial class ShaderMath
 {
+    /// <summary>The instance being drawn, from 0 to the draw's instance count minus 1 (vertex shaders).</summary>
+    [Intrinsic("instanceid")] public static uint InstanceId() => 0;
+
     private static float SmoothstepScalar(float edge0, float edge1, float x)
     {
         float t = System.Math.Clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
