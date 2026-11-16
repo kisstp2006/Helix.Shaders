@@ -111,6 +111,15 @@ public sealed class PassAttribute(string name) : Attribute
     public ColorWriteMask ColorMask { get; set; } = ColorWriteMask.All;
     public bool AlphaToMask { get; set; }
     public bool Conservative { get; set; }
+    // Material properties that give the states their values instead (ShaderLab's `Cull [_Cull]`): the reference's
+    // enum values (UnityEngine.Rendering's CullMode, CompareFunction, ColorWriteMask), 0 or 1 for ZWrite and AlphaToMask.
+    public string CullProperty { get; set; } = "";
+    public string ZWriteProperty { get; set; } = "";
+    public string ZTestProperty { get; set; } = "";
+    public string OffsetFactorProperty { get; set; } = "";
+    public string OffsetUnitsProperty { get; set; } = "";
+    public string ColorMaskProperty { get; set; } = "";
+    public string AlphaToMaskProperty { get; set; } = "";
 }
 
 /// <summary>
@@ -131,6 +140,15 @@ public sealed class SubShaderAttribute : Attribute
     public ColorWriteMask ColorMask { get; set; } = ColorWriteMask.All;
     public bool AlphaToMask { get; set; }
     public bool Conservative { get; set; }
+    // Material properties that give the states their values instead (ShaderLab's `Cull [_Cull]`): the reference's
+    // enum values (UnityEngine.Rendering's CullMode, CompareFunction, ColorWriteMask), 0 or 1 for ZWrite and AlphaToMask.
+    public string CullProperty { get; set; } = "";
+    public string ZWriteProperty { get; set; } = "";
+    public string ZTestProperty { get; set; } = "";
+    public string OffsetFactorProperty { get; set; } = "";
+    public string OffsetUnitsProperty { get; set; } = "";
+    public string ColorMaskProperty { get; set; } = "";
+    public string AlphaToMaskProperty { get; set; } = "";
 }
 
 /// <summary>
@@ -143,11 +161,24 @@ public sealed class UsePassAttribute(string path) : Attribute
     public string Path { get; } = path;
 }
 
-/// <summary>Blending of a pass; without it the pass overwrites the target. Target -1 applies to every target.</summary>
+/// <summary>
+/// Blending of a pass; without it the pass overwrites the target. Target -1 applies to every target. The factors and
+/// operations can come from material properties instead (ShaderLab's `Blend [_SrcBlend] [_DstBlend]`, the reference's
+/// BlendMode and BlendOp values); the attribute without factors takes them all from properties.
+/// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public sealed class BlendAttribute(BlendFactor source, BlendFactor destination, BlendFactor sourceAlpha, BlendFactor destinationAlpha) : Attribute
 {
     public BlendAttribute(BlendFactor source, BlendFactor destination) : this(source, destination, source, destination) { }
+
+    public BlendAttribute() : this(BlendFactor.One, BlendFactor.Zero) { }
+
+    public string SourceProperty { get; set; } = "";
+    public string DestinationProperty { get; set; } = "";
+    public string SourceAlphaProperty { get; set; } = "";
+    public string DestinationAlphaProperty { get; set; } = "";
+    public string OperationProperty { get; set; } = "";
+    public string OperationAlphaProperty { get; set; } = "";
 
     public BlendFactor Source { get; } = source;
     public BlendFactor Destination { get; } = destination;
@@ -169,6 +200,15 @@ public sealed class StencilAttribute : Attribute
     public StencilOperation Pass { get; set; } = StencilOperation.Keep;
     public StencilOperation Fail { get; set; } = StencilOperation.Keep;
     public StencilOperation ZFail { get; set; } = StencilOperation.Keep;
+    // Material properties that give the values instead (ShaderLab's `Ref [_StencilRef]`; the reference's
+    // CompareFunction and StencilOp values).
+    public string ReferenceProperty { get; set; } = "";
+    public string ReadMaskProperty { get; set; } = "";
+    public string WriteMaskProperty { get; set; } = "";
+    public string CompareProperty { get; set; } = "";
+    public string PassProperty { get; set; } = "";
+    public string FailProperty { get; set; } = "";
+    public string ZFailProperty { get; set; } = "";
 }
 
 // Material properties: instance fields of the definition class.
